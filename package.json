@@ -16,7 +16,6 @@
     "@iconify-json/simple-icons": "^1.2.49",
     "@nuxt/image": "1.11.0",
     "@nuxt/ui": "^3.3.2",
-    "axios": "^1.11.0",
     "nuxt": "^4.0.3"
   },
   "devDependencies": {

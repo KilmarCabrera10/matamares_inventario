@@ -14,15 +14,15 @@ withDefaults(defineProps<Props>(), {
 </script>
 <template>
   <!-- Vista resumen para la lista general -->
-  <article v-if="variant === 'summary'" class="border rounded-lg p-4 shadow hover:shadow-lg transition-shadow bg-white">
-    <h2 class="text-lg font-semibold mb-2 text-gray-900 min-h-[3.5rem] overflow-hidden">{{ product.title }}</h2>
-    <p class="text-gray-600 mb-3 text-sm min-h-[4.5rem] overflow-hidden">{{ product.description }}</p>
+  <article v-if="variant === 'summary'" class="border border-default rounded-lg p-4 shadow hover:shadow-lg transition-shadow bg-default">
+    <h2 class="text-lg font-semibold mb-2 text-highlighted min-h-[3.5rem] overflow-hidden">{{ product.title }}</h2>
+    <p class="text-muted mb-3 text-sm min-h-[4.5rem] overflow-hidden">{{ product.description }}</p>
     <div class="flex justify-between items-center mb-3">
-      <p class="text-blue-600 font-bold text-xl flex items-center">
+      <p class="text-primary font-bold text-xl flex items-center">
         <UIcon name="i-heroicons-currency-dollar" class="w-5 h-5 mr-1" />
         {{ product.price }}
       </p>
-      <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full flex items-center">
+      <span class="text-xs bg-muted text-toned px-2 py-1 rounded-full flex items-center">
         <UIcon name="i-heroicons-tag" class="w-3 h-3 mr-1" />
         {{ product.category }}
       </span>
@@ -33,10 +33,10 @@ withDefaults(defineProps<Props>(), {
   </article>
 
   <!-- Vista detallada para la página específica -->
-  <article v-else-if="variant === 'detailed'" class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+  <article v-else-if="variant === 'detailed'" class="max-w-6xl mx-auto bg-default rounded-xl shadow-lg overflow-hidden">
     <div class="lg:flex">
       <!-- Imagen del producto -->
-      <div class="lg:w-1/2 p-8 bg-gray-50 flex items-center justify-center min-h-[400px]">
+      <div class="lg:w-1/2 p-8 bg-muted flex items-center justify-center min-h-[400px]">
         <img 
           :src="product.image" 
           :alt="product.title" 
@@ -47,7 +47,7 @@ withDefaults(defineProps<Props>(), {
       <!-- Información del producto -->
       <div class="lg:w-1/2 p-8">
         <div class="mb-6">
-          <span class="inline-flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full mb-4">
+          <span class="inline-flex items-center bg-primary/10 text-primary text-sm px-3 py-1 rounded-full mb-4">
             <UIcon name="i-heroicons-tag" class="w-4 h-4 mr-1" />
             {{ product.category }}
           </span>

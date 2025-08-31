@@ -3,23 +3,12 @@ export default defineAppConfig({
   ui: {
     colors: {
       primary: 'blue',
-      neutral: 'gray',
-    },
-    // Global theme configuration
-    variables: {
-      light: {
-        background: '255 255 255',
-        foreground: '2 8 23'
-      },
-      dark: {
-        background: '2 8 23',
-        foreground: '255 255 255'
-      }
-    },
-    button: {
-      defaultVariants: {
-        color: 'primary'
-      }
+      secondary: 'slate', 
+      neutral: 'slate',
+      success: 'green',
+      info: 'blue',
+      warning: 'yellow',
+      error: 'red'
     }
   }
 })

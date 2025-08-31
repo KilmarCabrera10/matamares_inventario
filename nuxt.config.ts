@@ -6,6 +6,21 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // Configuración específica para Nuxt UI
+  ui: {
+    theme: {
+      colors: [
+        'primary',
+        'secondary', 
+        'success',
+        'info',
+        'warning',
+        'error',
+        'neutral'
+      ]
+    }
+  },
+
   // Runtime config para la API de Laravel
   runtimeConfig: {
     // Variables privadas del servidor (solo disponibles en el servidor)
@@ -13,13 +28,13 @@ export default defineNuxtConfig({
     
     // Variables públicas (disponibles en cliente y servidor)
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api/inventario',
       apiVersion: 'v1',
       APP_ENV: process.env.NODE_ENV || 'production'
     }
   },
 
-  // Auto-import types
+  // Auto-import types y composables
   imports: {
     presets: [
       {

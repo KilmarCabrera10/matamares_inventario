@@ -1,12 +1,6 @@
-export default defineNuxtPlugin(async () => {
-  const { restoreSession, checkAuth } = useAuth()
-  
-  // Solo en el cliente
+export default defineNuxtPlugin(() => {
+  // Solo en el cliente, inicializar la autenticación
   if (import.meta.client) {
-    // Restaurar sesión desde localStorage
-    restoreSession()
-    
-    // Verificar si el token sigue siendo válido
-    await checkAuth()
+    useAuth() // Esto automáticamente restaura la sesión
   }
 })

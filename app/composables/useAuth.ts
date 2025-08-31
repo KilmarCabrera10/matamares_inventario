@@ -29,11 +29,32 @@ export interface RegisterData {
 }
 
 export const useAuth = () => {
-  // Estados reactivos
-  const user = useState<User | null>('auth.user', () => null)
-  const token = useState<string | null>('auth.token', () => null)
+  // Estados reactivos - usar ref normal para mejor control
+  const user = ref<User | null>(null)
+  const token = ref<string | null>(null)
+  const selectedOrgId = ref<string | null>(null)
+  
+  // Si estamos en el cliente, intentar restaurar inmediatamente
+  if (import.meta.client && !token.value) {
+    const savedToken = localStorage.getItem('auth_token')
+    const savedUser = localStorage.getItem('auth_user')
+    const savedOrgId = localStorage.getItem('selected_org_id')
+    
+    if (savedToken && savedUser) {
+      try {
+        const parsedUser = JSON.parse(savedUser)
+        if (parsedUser && (parsedUser.id || parsedUser._id) && parsedUser.email) {
+          token.value = savedToken
+          user.value = parsedUser
+          selectedOrgId.value = savedOrgId
+        }
+      } catch {
+        // Ignorar errores de parsing
+      }
+    }
+  }
+  
   const isAuthenticated = computed(() => !!token.value && !!user.value)
-  const selectedOrgId = useState<string | null>('auth.selectedOrgId', () => null)
 
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBase
@@ -140,11 +161,10 @@ export const useAuth = () => {
       user.value = null
       selectedOrgId.value = null
       
-      if (import.meta.client) {
-        localStorage.removeItem('auth_token')
-        localStorage.removeItem('auth_user')
-        localStorage.removeItem('selected_org_id')
-      }
+      clearLocalStorage()
+      
+      // Redirigir a la página de bienvenida
+      await navigateTo('/welcome')
     }
   }
 
@@ -196,7 +216,8 @@ export const useAuth = () => {
       return false
     } catch (error) {
       console.error('Error al verificar autenticación:', error)
-      await logout()
+      // No hacer logout automático, solo retornar false
+      // Esto permite mantener la sesión local cuando no hay conectividad
       return false
     }
   }
@@ -204,23 +225,57 @@ export const useAuth = () => {
   // Restaurar sesión desde localStorage
   const restoreSession = () => {
     if (import.meta.client) {
-      const savedToken = localStorage.getItem('auth_token')
-      const savedUser = localStorage.getItem('auth_user')
-      const savedOrgId = localStorage.getItem('selected_org_id')
-      
-      if (savedToken && savedUser) {
-        try {
-          token.value = savedToken
-          user.value = JSON.parse(savedUser)
-          selectedOrgId.value = savedOrgId
-        } catch (error) {
-          console.error('Error al restaurar sesión:', error)
-          // Limpiar datos corruptos
-          localStorage.removeItem('auth_token')
-          localStorage.removeItem('auth_user')
-          localStorage.removeItem('selected_org_id')
+      try {
+        const savedToken = localStorage.getItem('auth_token')
+        const savedUser = localStorage.getItem('auth_user')
+        const savedOrgId = localStorage.getItem('selected_org_id')
+        
+        // Validar que el token existe y no está vacío
+        if (savedToken && savedToken.trim() !== '') {
+          // Validar que el usuario existe y es un JSON válido
+          if (savedUser && savedUser.trim() !== '') {
+            try {
+              const parsedUser = JSON.parse(savedUser)
+              
+              // Validar que el usuario tiene las propiedades mínimas requeridas
+              // Acepta tanto 'id' como '_id' para mayor compatibilidad
+              if (parsedUser && (parsedUser.id || parsedUser._id) && parsedUser.email) {
+                token.value = savedToken
+                user.value = parsedUser
+                selectedOrgId.value = savedOrgId
+                return true
+              } else {
+                console.warn('Datos de usuario inválidos, limpiando sesión')
+                clearLocalStorage()
+                return false
+              }
+            } catch {
+              console.warn('Error al parsear datos de usuario, limpiando sesión')
+              clearLocalStorage()
+              return false
+            }
+          } else {
+            clearLocalStorage()
+            return false
+          }
+        } else {
+          return false
         }
+      } catch (error) {
+        console.error('Error al restaurar sesión:', error)
+        clearLocalStorage()
+        return false
       }
+    }
+    return false
+  }
+
+  // Función auxiliar para limpiar localStorage
+  const clearLocalStorage = () => {
+    if (import.meta.client) {
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('auth_user')
+      localStorage.removeItem('selected_org_id')
     }
   }
 
@@ -247,6 +302,7 @@ export const useAuth = () => {
     checkAuth,
     restoreSession,
     selectOrganization,
-    getAuthHeaders
+    getAuthHeaders,
+    clearLocalStorage
   }
 }

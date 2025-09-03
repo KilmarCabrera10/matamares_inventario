@@ -10,7 +10,7 @@
     <!-- Sidebar -->
     <div 
       :class="[
-        'fixed inset-y-0 left-0 z-[9999] flex flex-col transition-all duration-300 ease-in-out',
+        'fixed inset-y-0 left-0 z-45 flex flex-col transition-all duration-300 ease-in-out',
         'bg-white dark:bg-gray-800',
         open ? 'w-64' : 'w-16',
         isMobile && !open ? '-translate-x-full' : 'translate-x-0'

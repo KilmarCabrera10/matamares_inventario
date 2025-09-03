@@ -1,5 +1,5 @@
 <template>
-  <header class="fixed top-0 z-30 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm pr-4 sm:pr-6 lg:pr-8 transition-all duration-300 ease-in-out" :class="headerClasses">
+  <header class="fixed top-0 z-40 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm pr-4 sm:pr-6 lg:pr-8 transition-all duration-300 ease-in-out" :class="headerClasses">
     <div class="flex h-16 items-center justify-between">
             <!-- Left side -->
       <div class="flex items-center">
@@ -53,20 +53,44 @@
         <ColorModeToggle />
         
         <!-- User dropdown -->
-        <UDropdownMenu :items="dropdownItems">
-          <template #default>
-            <button 
-              type="button"
-              class="p-1 rounded-full hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              <UAvatar
-                src="/api/placeholder/32/32"
-                alt="Usuario"
-                size="sm"
-              />
-            </button>
-          </template>
-        </UDropdownMenu>
+        <div class="relative">
+          <UPopover 
+            :portal="false"
+            :content="{
+              align: 'end',
+              side: 'bottom',
+              sideOffset: 8,
+              collisionPadding: 8
+            }"
+            :ui="{
+              content: 'w-48 p-0 z-50'
+            }"
+          >
+            <UButton 
+              color="neutral" 
+              variant="ghost"
+              icon="i-lucide-user"
+              class="p-1"
+            />
+            
+            <template #content>
+              <div class="py-1">
+                <template v-for="(group, groupIndex) in dropdownItems" :key="groupIndex">
+                  <template v-for="(item, itemIndex) in group" :key="itemIndex">
+                    <button
+                      class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                      @click="item.onSelect"
+                    >
+                      <Icon :name="item.icon" class="h-4 w-4" />
+                      {{ item.label }}
+                    </button>
+                  </template>
+                  <div v-if="groupIndex < dropdownItems.length - 1" class="border-t border-gray-200 dark:border-gray-600 my-1" />
+                </template>
+              </div>
+            </template>
+          </UPopover>
+        </div>
       </div>
     </div>
   </header>
@@ -80,6 +104,9 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   sidebarOpen: false
 })
+
+// Composable para configuración de dropdowns
+// const { headerDropdownConfig } = useDropdown()
 
 // Clases dinámicas para el header
 const headerClasses = computed(() => {
@@ -109,7 +136,7 @@ const handleLogout = async () => {
   }
 }
 
-// Estructura de dropdown mejorada
+// Estructura de dropdown para UDropdownMenu
 const dropdownItems = computed(() => [
   [{
     label: 'Perfil',

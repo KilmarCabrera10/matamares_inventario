@@ -1,12 +1,22 @@
 <template>
   <div>
     <!-- Versión expandida -->
-    <div v-if="!collapsed" class="w-full">
-      <UDropdownMenu :items="dropdownItems">
+    <div v-if="!collapsed" class="w-full relative">
+      <UPopover 
+        :portal="false"
+        :content="{
+          align: 'start',
+          side: 'top',
+          sideOffset: 8,
+          collisionPadding: 8
+        }"
+        :ui="{
+          content: 'w-48 p-0 z-50'
+        }"
+      >
         <template #default="{ open }">
-          <button 
-            type="button"
-            class="flex items-center w-full p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          <div 
+            class="flex items-center w-full p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200"
           >
             <UAvatar
               src="/api/placeholder/32/32"
@@ -28,27 +38,64 @@
                 open ? 'rotate-180' : ''
               ]"
             />
-          </button>
+          </div>
         </template>
-      </UDropdownMenu>
+        
+        <template #content>
+          <div class="py-1">
+            <template v-for="(group, groupIndex) in dropdownItems" :key="groupIndex">
+              <template v-for="(item, itemIndex) in group" :key="itemIndex">
+                <button
+                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                  @click="item.onSelect"
+                >
+                  <Icon :name="item.icon" class="h-4 w-4" />
+                  {{ item.label }}
+                </button>
+              </template>
+            </template>
+          </div>
+        </template>
+      </UPopover>
     </div>
     
     <!-- Versión colapsada -->
-    <div v-else class="flex justify-center">
-      <UDropdownMenu :items="dropdownItems">
-        <template #default>
-          <button 
-            type="button"
-            class="p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-          >
-            <UAvatar
-              src="/api/placeholder/32/32"
-              alt="Usuario"
-              size="sm"
-            />
-          </button>
+    <div v-else class="flex justify-center relative">
+      <UPopover 
+        :portal="false"
+        :content="{
+          align: 'start',
+          side: 'right',
+          sideOffset: 8,
+          collisionPadding: 8
+        }"
+        :ui="{
+          content: 'w-48 p-0 z-50'
+        }"
+      >
+        <UButton 
+          color="neutral" 
+          variant="ghost"
+          icon="i-lucide-user"
+          class="p-2"
+        />
+        
+        <template #content>
+          <div class="py-1">
+            <template v-for="(group, groupIndex) in dropdownItems" :key="groupIndex">
+              <template v-for="(item, itemIndex) in group" :key="itemIndex">
+                <button
+                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                  @click="item.onSelect"
+                >
+                  <Icon :name="item.icon" class="h-4 w-4" />
+                  {{ item.label }}
+                </button>
+              </template>
+            </template>
+          </div>
         </template>
-      </UDropdownMenu>
+      </UPopover>
     </div>
   </div>
 </template>
@@ -61,6 +108,7 @@ interface Props {
 defineProps<Props>()
 
 const { logout, user } = useAuth()
+// const { sidebarExpandedDropdownConfig, sidebarCollapsedDropdownConfig } = useDropdown()
 
 const isLoggingOut = ref(false)
 
@@ -75,7 +123,7 @@ const handleLogout = async () => {
   }
 }
 
-// Estructura de dropdown mejorada
+// Estructura de dropdown para UDropdownMenu
 const dropdownItems = computed(() => [
   [{
     label: 'Cerrar sesión',

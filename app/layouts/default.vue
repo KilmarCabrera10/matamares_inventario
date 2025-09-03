@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen main-background">
     <!-- Sidebar -->
     <AppSidebar v-model:open="sidebarOpen" />
     
@@ -11,11 +11,13 @@
       ]"
     >
       <!-- Top Bar -->
-      <AppTopBar @toggle-sidebar="sidebarOpen = !sidebarOpen" />
+      <AppTopBar :sidebar-open="sidebarOpen" />
       
       <!-- Page Content -->
-      <main class="p-4 sm:p-6 lg:p-8">
-        <slot />
+      <main class="ml-2 mt-2 me-3 pt-16" data-main-content>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+          <slot />
+        </div>
       </main>
     </div>
   </div>

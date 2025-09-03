@@ -49,7 +49,7 @@
     <!-- Charts y Tables -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
       <!-- Chart de Inventario -->
-      <UCard>
+      <UCard class="dashboard-section-chart neutral-card">
         <template #header>
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -74,7 +74,7 @@
       </UCard>
 
       <!-- Productos con stock bajo -->
-      <UCard>
+      <UCard class="dashboard-section-products neutral-card">
         <template #header>
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -119,7 +119,7 @@
     </div>
 
     <!-- Actividad Reciente -->
-    <UCard>
+    <UCard class="dashboard-section-activity neutral-card">
       <template #header>
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
           Actividad Reciente
@@ -130,7 +130,7 @@
         <div 
           v-for="activity in recentActivity" 
           :key="activity.id"
-          class="flex items-center space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+          class="activity-item flex items-center space-x-4"
         >
           <div 
             :class="[

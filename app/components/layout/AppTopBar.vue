@@ -1,19 +1,10 @@
 <template>
-  <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 lg:px-8">
+  <header class="fixed top-0 z-30 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm pr-4 sm:pr-6 lg:pr-8 transition-all duration-300 ease-in-out" :class="headerClasses">
     <div class="flex h-16 items-center justify-between">
-      <!-- Left side -->
+            <!-- Left side -->
       <div class="flex items-center">
-        <!-- Sidebar toggle -->
-        <UButton
-          icon="i-lucide-menu"
-          color="neutral"
-          variant="ghost"
-          size="sm"
-          @click="$emit('toggleSidebar')"
-        />
-        
         <!-- Breadcrumb -->
-        <nav class="ml-4 hidden sm:block">
+        <nav class="hidden sm:block pl-4">
           <ol class="flex items-center space-x-2 text-sm">
             <li v-for="(item, index) in breadcrumbs" :key="item.href">
               <div class="flex items-center">
@@ -82,9 +73,25 @@
 </template>
 
 <script setup lang="ts">
-defineEmits<{
-  toggleSidebar: []
-}>()
+interface Props {
+  sidebarOpen?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  sidebarOpen: false
+})
+
+// Clases dinámicas para el header
+const headerClasses = computed(() => {
+  return [
+    'left-0 right-0',
+    // En desktop, ajustar según el estado del sidebar
+    {
+      'lg:left-64': props.sidebarOpen,
+      'lg:left-16': !props.sidebarOpen
+    }
+  ]
+})
 
 // Obtener la función de logout
 const { logout } = useAuth()

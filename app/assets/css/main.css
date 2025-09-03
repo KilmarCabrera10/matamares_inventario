@@ -1,21 +1,387 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-/* Personalización de colores para el modo claro y oscuro */
+/* Configuración de tema personalizado para Nuxt UI */
 :root {
-  /* Personalizar el color primario si fuera necesario */
-  --ui-primary: var(--ui-color-primary-600);
-  
-  /* Personalizar el fondo y texto para una mejor consistencia */
-  --ui-bg: var(--color-white);
-  --ui-text: var(--ui-color-neutral-700);
+  /* Colores base más suaves */
+  --color-gray-50: 248 250 252;
+  --color-gray-100: 241 245 249;
+  --color-gray-150: 235 239 244;   /* Para transiciones suaves */
+  --color-gray-200: 226 232 240;
+  --color-gray-300: 203 213 225;
+  --color-gray-400: 148 163 184;
+  --color-gray-500: 100 116 139;
+  --color-gray-600: 71 85 105;
+  --color-gray-700: 51 65 85;
+  --color-gray-800: 30 41 59;
+  --color-gray-900: 15 23 42;
+  --color-gray-950: 2 6 23;
+
+  /* Colores primarios mejorados - SOLO para navegación */
+  --color-primary-50: 239 246 255;
+  --color-primary-100: 219 234 254;
+  --color-primary-200: 191 219 254;
+  --color-primary-300: 147 197 253;
+  --color-primary-400: 96 165 250;
+  --color-primary-500: 59 130 246;
+  --color-primary-600: 37 99 235;
+  --color-primary-700: 29 78 216;
+  --color-primary-800: 30 64 175;
+  --color-primary-900: 30 58 138;
+  --color-primary-950: 23 37 84;
+
+  /* Nuevo color primario para contenido - Verde esmeralda */
+  --color-content-primary-50: 236 254 255;
+  --color-content-primary-100: 207 250 254;
+  --color-content-primary-200: 165 243 252;
+  --color-content-primary-300: 103 232 249;
+  --color-content-primary-400: 34 211 238;
+  --color-content-primary-500: 6 182 212;
+  --color-content-primary-600: 8 145 178;
+  --color-content-primary-700: 14 116 144;
+  --color-content-primary-800: 21 94 117;
+  --color-content-primary-900: 22 78 99;
+  --color-content-primary-950: 8 51 68;
+
+  /* Fondos principales */
+  --color-surface-50: 250 251 252;
+  --color-surface-100: 245 247 250;
+  --color-surface-200: 238 242 247;
+
+  /* Cards elegantes con tonos neutros cálidos */
+  --color-card-bg: 252 253 254;         /* Fondo de card muy sutil */
+  --color-card-border: 229 231 235;     /* Borde muy suave */
+  --color-card-hover: 247 249 252;      /* Hover elegante */
 }
 
+
+
 .dark {
-  /* Color primario en modo oscuro */
-  --ui-primary: var(--ui-color-primary-400);
-  
-  /* Fondo y texto en modo oscuro */
-  --ui-bg: var(--ui-color-neutral-950);
-  --ui-text: var(--ui-color-neutral-200);
+  /* Colores oscuros más grises y menos negros puros */
+  --color-gray-50: 15 23 35;         /* Más gris, menos negro */
+  --color-gray-100: 25 35 50;        /* Gris azulado oscuro */
+  --color-gray-200: 35 45 65;        /* Gris medio */
+  --color-gray-300: 50 60 80;        /* Gris claro */
+  --color-gray-400: 75 85 105;       /* Gris más claro */
+  --color-gray-500: 100 116 139;
+  --color-gray-600: 148 163 184;
+  --color-gray-700: 203 213 225;
+  --color-gray-800: 226 232 240;
+  --color-gray-900: 241 245 249;
+  --color-gray-950: 248 250 252;
+
+  /* Colores primarios para modo oscuro - GRISES en lugar de azul */
+  --color-primary-50: 15 23 35;
+  --color-primary-100: 25 35 50;
+  --color-primary-200: 35 45 65;
+  --color-primary-300: 50 60 80;
+  --color-primary-400: 75 85 105;
+  --color-primary-500: 100 116 139;
+  --color-primary-600: 148 163 184;
+  --color-primary-700: 203 213 225;
+  --color-primary-800: 226 232 240;
+  --color-primary-900: 241 245 249;
+  --color-primary-950: 248 250 252;
+
+  /* Fondos para modo oscuro */
+  --color-surface-50: 25 30 40;
+  --color-surface-100: 32 38 50;
+  --color-surface-200: 40 46 60;
+  --color-surface-900: 15 23 35;
+
+  /* Cards elegantes para modo oscuro */
+  --color-card-bg: 30 36 47;           /* Fondo de card gris azulado */
+  --color-card-border: 45 52 65;       /* Borde suave */
+  --color-card-hover: 35 42 55;        /* Hover elegante */
+}
+
+/* Transiciones globales mejoradas */
+*,
+*::before,
+*::after {
+  transition: 
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    fill 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estilos base mejorados */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Mejoras para componentes de Nuxt UI */
+[data-ui] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mejoras específicas para botones */
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid rgb(var(--color-content-primary-500));
+  outline-offset: 2px;
+}
+
+/* Mejoras para formularios */
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 3px rgb(var(--color-content-primary-500) / 0.1);
+}
+
+/* ========================================
+   SEPARACIÓN DE COLORES: NAVEGACIÓN VS CONTENIDO
+   ======================================== */
+
+/* NAVEGACIÓN: Solo azul */
+aside,
+.sidebar,
+[data-sidebar],
+nav[data-topbar],
+header {
+  --color-primary-50: 239 246 255;
+  --color-primary-100: 219 234 254;
+  --color-primary-200: 191 219 254;
+  --color-primary-300: 147 197 253;
+  --color-primary-400: 96 165 250;
+  --color-primary-500: 59 130 246;
+  --color-primary-600: 37 99 235;
+  --color-primary-700: 29 78 216;
+  --color-primary-800: 30 64 175;
+  --color-primary-900: 30 58 138;
+  --color-primary-950: 23 37 84;
+}
+
+/* CONTENIDO: Cyan */
+main {
+  --color-primary-50: var(--color-content-primary-50);
+  --color-primary-100: var(--color-content-primary-100);
+  --color-primary-200: var(--color-content-primary-200);
+  --color-primary-300: var(--color-content-primary-300);
+  --color-primary-400: var(--color-content-primary-400);
+  --color-primary-500: var(--color-content-primary-500);
+  --color-primary-600: var(--color-content-primary-600);
+  --color-primary-700: var(--color-content-primary-700);
+  --color-primary-800: var(--color-content-primary-800);
+  --color-primary-900: var(--color-content-primary-900);
+  --color-primary-950: var(--color-content-primary-950);
+}
+
+/* Líneas suaves y sutiles para navegación */
+header.border-b {
+  border-color: rgba(203, 213, 225, 0.3) !important;
+}
+
+.border-r {
+  border-color: rgba(203, 213, 225, 0.3) !important;
+}
+
+/* Modo oscuro con líneas muy suaves */
+.dark header.border-b {
+  border-color: rgba(71, 85, 105, 0.4) !important;
+}
+
+.dark .border-r {
+  border-color: rgba(71, 85, 105, 0.4) !important;
+}
+
+/* Suavizar todos los bordes de navegación */
+.border-gray-200,
+.dark .border-gray-700 {
+  border-color: rgba(203, 213, 225, 0.3) !important;
+}
+
+.dark .border-gray-200,
+.dark .border-gray-700 {
+  border-color: rgba(71, 85, 105, 0.4) !important;
+}
+
+/* Elementos específicos del dashboard que se ven en la imagen */
+.bg-gray-50 {
+  background-color: rgb(var(--color-card-bg)) !important;
+}
+
+.dark .bg-gray-800 {
+  background-color: rgb(var(--color-card-bg)) !important;
+}
+
+/* Secciones específicas del dashboard */
+.dashboard-section-chart,
+.dashboard-section-products,
+.dashboard-section-activity {
+  background-color: rgb(var(--color-card-bg)) !important;
+  border: 1px solid rgb(var(--color-card-border)) !important;
+  border-radius: 0.75rem !important;
+}
+
+/* Cards neutrales específicas - sin líneas molestas */
+.neutral-card,
+[data-ui="card"].neutral-card,
+.stat-card.neutral-card,
+.dashboard-card.neutral-card {
+  position: relative;
+  background-color: rgb(var(--color-card-bg)) !important;
+  border: none !important;
+  box-shadow: 
+    0 1px 3px 0 rgb(0 0 0 / 0.05),
+    0 1px 2px 0 rgb(0 0 0 / 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Línea redondeada suave para contenido de páginas */
+main .neutral-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: rgb(var(--color-content-primary-500));
+  border-radius: 2px 2px 0 0;
+  opacity: 0.8;
+}
+
+/* Línea para modo oscuro */
+.dark main .neutral-card::before {
+  background-color: rgb(var(--color-content-primary-400));
+  opacity: 0.9;
+}
+
+/* Hover effects para cards neutrales */
+.neutral-card:hover,
+[data-ui="card"].neutral-card:hover,
+.stat-card.neutral-card:hover,
+.dashboard-card.neutral-card:hover {
+  background-color: rgb(var(--color-card-hover)) !important;
+  box-shadow: 
+    0 4px 6px -1px rgb(0 0 0 / 0.07),
+    0 2px 4px -1px rgb(0 0 0 / 0.06) !important;
+  transform: translateY(-1px);
+}
+
+/* Modo oscuro para cards neutrales */
+.dark .neutral-card,
+.dark [data-ui="card"].neutral-card,
+.dark .stat-card.neutral-card,
+.dark .dashboard-card.neutral-card {
+  background-color: rgb(var(--color-card-bg)) !important;
+  border: none !important;
+  box-shadow: 
+    0 1px 3px 0 rgb(0 0 0 / 0.2),
+    0 1px 2px 0 rgb(0 0 0 / 0.15) !important;
+}
+
+.dark .neutral-card:hover,
+.dark [data-ui="card"].neutral-card:hover,
+.dark .stat-card.neutral-card:hover,
+.dark .dashboard-card.neutral-card:hover {
+  background-color: rgb(var(--color-card-hover)) !important;
+  box-shadow: 
+    0 4px 6px -1px rgb(0 0 0 / 0.3),
+    0 2px 4px -1px rgb(0 0 0 / 0.25) !important;
+}
+
+/* Fondo sólido para el contenido principal */
+.main-background {
+  background-color: rgb(var(--color-surface-50));
+  min-height: 100vh;
+}
+
+.dark .main-background {
+  background-color: rgb(var(--color-surface-900));
+}
+
+/* Efecto hover para elementos interactivos */
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px 0 rgb(0 0 0 / 0.08) !important;
+}
+
+.dark .hover-lift:hover {
+  box-shadow: 0 4px 12px 0 rgb(0 0 0 / 0.30) !important;
+}
+
+/* Estilos específicos para diferentes tipos de cards */
+.stat-card {
+  border-radius: 0.75rem !important;
+  overflow: hidden;
+}
+
+.activity-card {
+  border-radius: 0.5rem !important;
+  background-color: rgb(var(--color-card-bg));
+}
+
+/* Cards con acentos de color cyan (para elementos destacados) */
+.accent-card {
+  border-left: 3px solid rgb(var(--color-content-primary-500)) !important;
+}
+
+.dark .accent-card {
+  border-left: 3px solid rgb(var(--color-content-primary-400)) !important;
+}
+
+/* Mejorar la apariencia de los elementos de actividad */
+.activity-item {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: rgb(var(--color-card-bg));
+  border: 1px solid rgb(var(--color-card-border));
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0.5rem;
+}
+
+.activity-item:hover {
+  background-color: rgb(var(--color-card-hover));
+  transform: translateX(4px);
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
+}
+
+.dark .activity-item {
+  background-color: rgb(var(--color-card-bg));
+  border-color: rgb(var(--color-card-border));
+}
+
+.dark .activity-item:hover {
+  background-color: rgb(var(--color-card-hover));
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.2);
+}
+
+/* Utilidades adicionales para componentes mejorados */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
 }

@@ -11,7 +11,7 @@
     <div 
       :class="[
         'fixed inset-y-0 left-0 z-[9999] flex flex-col transition-all duration-300 ease-in-out',
-        'bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700',
+        'bg-white dark:bg-gray-800',
         open ? 'w-64' : 'w-16',
         isMobile && !open ? '-translate-x-full' : 'translate-x-0'
       ]"
@@ -19,23 +19,49 @@
       <!-- Logo/Brand -->
       <div 
         :class="[
-          'flex items-center px-4 py-4',
-          open ? 'border-b border-gray-200 dark:border-gray-700 justify-start' : 'justify-center'
+          'flex items-center px-4 py-4 cursor-pointer group transition-all duration-200',
+          open ? 'justify-between' : 'justify-center'
         ]"
+        @mouseenter="handleMouseEnter"
+        @mouseleave="isHoveringLogo = false"
+        @click="emit('update:open', !open)"
       >
-        <Icon 
-          name="i-lucide-package" 
-          :class="[
-            'text-primary-600 dark:text-primary-400 flex-shrink-0',
-            open ? 'h-8 w-8' : 'h-6 w-6'
-          ]" 
-        />
-        <span 
-          v-if="open" 
-          class="ml-3 text-xl font-bold text-gray-900 dark:text-white transition-opacity duration-200"
-        >
-          Inventario
-        </span>
+        <div class="flex items-center">
+          <!-- Ícono que cambia en hover solo cuando está contraído -->
+          <div class="relative">
+            <Icon 
+              name="i-lucide-package" 
+              :class="[
+                'text-primary-600 dark:text-primary-400 flex-shrink-0 transition-all duration-200',
+                open ? 'h-8 w-8' : 'h-7 w-7',
+                !open && isHoveringLogo ? 'opacity-0 scale-90' : 'opacity-100 scale-100'
+              ]" 
+            />
+            <Icon 
+              v-if="!open"
+              name="i-lucide-menu" 
+              :class="[
+                'text-primary-600 dark:text-primary-400 flex-shrink-0 transition-all duration-200 absolute top-0 left-0',
+                'h-7 w-7',
+                isHoveringLogo ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+              ]" 
+            />
+          </div>
+          <span 
+            v-if="open" 
+            class="ml-3 text-xl font-bold text-gray-900 dark:text-white transition-all duration-200"
+          >
+            Inventario
+          </span>
+        </div>
+        
+        <!-- Ícono de hamburguesa pequeño al final cuando está expandido -->
+        <div v-if="open" class="flex items-center">
+          <Icon 
+            name="i-lucide-menu" 
+            class="h-4 w-4 text-primary-600 dark:text-primary-400 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors duration-200" 
+          />
+        </div>
       </div>
       
       <!-- Navigation -->
@@ -79,13 +105,23 @@ interface Props {
   open: boolean
 }
 
-defineProps<Props>()
+const _props = defineProps<Props>()
 const emit = defineEmits<{
   'update:open': [value: boolean]
 }>()
 
 // Función para expandir el sidebar cuando se hace clic en un item con hijos mientras está colapsado
 const expandedItemName = ref<string | null>(null)
+
+// Estado para el hover del logo
+const isHoveringLogo = ref(false)
+
+const handleMouseEnter = () => {
+  // Solo cambiar el ícono si está contraído
+  if (!_props.open) {
+    isHoveringLogo.value = true
+  }
+}
 
 const handleExpandSidebar = (itemName: string) => {
   emit('update:open', true)

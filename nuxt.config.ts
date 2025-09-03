@@ -6,21 +6,6 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  // Configuración específica para Nuxt UI
-  ui: {
-    theme: {
-      colors: [
-        'primary',
-        'secondary', 
-        'success',
-        'info',
-        'warning',
-        'error',
-        'neutral'
-      ]
-    }
-  },
-
   // Runtime config para la API de Laravel
   runtimeConfig: {
     // Variables privadas del servidor (solo disponibles en el servidor)

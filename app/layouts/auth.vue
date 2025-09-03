@@ -1,11 +1,11 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
     <div class="w-full max-w-md">
       <!-- Logo/Brand -->
       <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-full mb-4">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl mb-4 shadow-lg shadow-cyan-500/20">
           <Icon 
-            name="lucide:package" 
+            name="i-lucide-package" 
             class="h-8 w-8 text-white" 
           />
         </div>
@@ -18,7 +18,7 @@
       </div>
       
       <!-- Content -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
+      <div class="neutral-card p-6 sm:p-8">
         <slot />
       </div>
       

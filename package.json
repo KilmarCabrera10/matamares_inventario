@@ -17,6 +17,9 @@
     "@nuxt/image": "1.11.0",
     "@nuxt/ui": "^3.3.2",
     "@nuxtjs/color-mode": "^3.5.2",
+    "@vueform/multiselect": "^2.6.11",
+    "@vuepic/vue-datepicker": "^11.0.2",
+    "date-fns": "^4.1.0",
     "nuxt": "^4.0.3"
   },
   "devDependencies": {

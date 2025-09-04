@@ -16,10 +16,10 @@
                 <NuxtLink
                   :to="item.href"
                   :class="[
-                    'font-medium transition-colors duration-200',
+                    'font-medium transition-colors duration-200 px-2 py-1 rounded-md',
                     index === breadcrumbs.length - 1
-                      ? 'text-gray-900 dark:text-white'
-                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                   ]"
                 >
                   {{ item.name }}
@@ -157,6 +157,39 @@ const dropdownItems = computed(() => [
 const route = useRoute()
 
 const breadcrumbs = computed(() => {
+  // Breadcrumbs personalizados para rutas específicas
+  const customBreadcrumbs: Record<string, Array<{name: string, href: string}>> = {
+    '/movimientos/cuadre-caja': [
+      { name: 'Inicio', href: '/' },
+      { name: 'Movimientos', href: '/movimientos' },
+      { name: 'Cuadre de Caja', href: '/movimientos/cuadre-caja' }
+    ],
+    '/movimientos/ingresos': [
+      { name: 'Inicio', href: '/' },
+      { name: 'Movimientos', href: '/movimientos' },
+      { name: 'Ingresos', href: '/movimientos/ingresos' }
+    ],
+    '/movimientos/gastos': [
+      { name: 'Inicio', href: '/' },
+      { name: 'Movimientos', href: '/movimientos' },
+      { name: 'Gastos', href: '/movimientos/gastos' }
+    ],
+    '/products': [
+      { name: 'Inicio', href: '/' },
+      { name: 'Productos', href: '/products' }
+    ],
+    '/dashboard': [
+      { name: 'Inicio', href: '/' },
+      { name: 'Dashboard', href: '/dashboard' }
+    ]
+  }
+  
+  // Si existe un breadcrumb personalizado para esta ruta, usarlo
+  if (customBreadcrumbs[route.path]) {
+    return customBreadcrumbs[route.path]
+  }
+  
+  // Si no, generar breadcrumb dinámico como antes
   const pathSegments = route.path.split('/').filter(Boolean)
   const breadcrumbs = [{ name: 'Inicio', href: '/' }]
   
@@ -167,11 +200,15 @@ const breadcrumbs = computed(() => {
     // Mapear segmentos a nombres legibles
     const nameMap: Record<string, string> = {
       'dashboard': 'Dashboard',
-      'products': 'Productos',
+      'products': 'Productos', 
       'inventory': 'Inventario',
       'reports': 'Reportes',
       'settings': 'Configuración',
       'auth': 'Autenticación',
+      'movimientos': 'Movimientos',
+      'cuadre-caja': 'Cuadre-caja',
+      'ingresos': 'Ingresos',
+      'gastos': 'Gastos',
       'create': 'Crear',
       'edit': 'Editar'
     }

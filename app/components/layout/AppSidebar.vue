@@ -180,6 +180,16 @@ const navigationItems: NavigationItem[] = [
     ]
   },
   {
+    name: 'Movimientos',
+    href: '/movimientos',
+    icon: 'i-lucide-arrow-up-down',
+    children: [
+      { name: 'Registro de Ingresos', href: '/movimientos/ingresos', icon: 'i-lucide-arrow-up' },
+      { name: 'Registro de Gastos', href: '/movimientos/gastos', icon: 'i-lucide-arrow-down' },
+      { name: 'Cuadre de Caja', href: '/movimientos/cuadre-caja', icon: 'i-lucide-calculator' }
+    ]
+  },
+  {
     name: 'Reportes',
     href: '/reports',
     icon: 'i-lucide-bar-chart-3'

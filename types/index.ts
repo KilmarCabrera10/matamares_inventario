@@ -11,12 +11,12 @@ export interface Organization {
   updated_at: string
 }
 
-// Usuario base
+// Usuario base (como viene del backend)
 export interface BaseUser {
   id: string
   name: string
   email: string
-  organizations: Organization[]
+  organizations?: Organization[] // Opcional, se puede agregar después
 }
 
 // Respuesta de autenticación
@@ -26,6 +26,7 @@ export interface AuthResponse {
     user: BaseUser
     token: string
     expires_at: string
+    organizations: Organization[] // Las organizaciones vienen separadas del usuario
   }
   message?: string
   error?: string

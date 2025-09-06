@@ -94,15 +94,16 @@ export const useAuth = () => {
   // Headers con autenticación
   const getAuthHeaders = () => {
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     }
     
     if (token.value) {
-      headers['token'] = token.value
+      headers['Authorization'] = `Bearer ${token.value}`
     }
     
     if (selectedOrgId.value) {
-      headers['organizationId'] = selectedOrgId.value
+      headers['Organization-Id'] = selectedOrgId.value
     }
     
     return headers
@@ -110,73 +111,69 @@ export const useAuth = () => {
 
   // Funciones de autenticación
   const login = async (credentials: LoginCredentials) => {
-    try {
-      const response = await $fetch<AuthResponse>('/auth/login', {
-        method: 'POST',
-        baseURL,
-        body: credentials
-      })
+    const response = await $fetch<AuthResponse>('/auth/login', {
+      method: 'POST',
+      baseURL,
+      body: credentials
+    })
 
-      if (response.success && response.data) {
-        // Guardar datos de autenticación
-        token.value = response.data.token
-        user.value = response.data.user
-        
-        // Seleccionar primera organización por defecto
-        if (response.data.user.organizations?.length > 0) {
-          selectedOrgId.value = response.data.user.organizations[0]?.id.toString() || null
-        }
-
-        // Persistir en localStorage
-        if (import.meta.client) {
-          localStorage.setItem('auth_token', response.data.token)
-          localStorage.setItem('auth_user', JSON.stringify(response.data.user))
-          if (selectedOrgId.value) {
-            localStorage.setItem('selected_org_id', selectedOrgId.value)
-          }
-          // Establecer tiempo de expiración de la sesión
-          setSessionExpiration()
-        }
-
-        return response
-      }
+    if (response.success && response.data) {
+      // Guardar datos de autenticación
+      token.value = response.data.token
+      user.value = response.data.user
       
-      throw new Error(response.message || 'Error en el login')
-    } catch (error: unknown) {
-      console.error('Error en login:', error)
-      throw error
+      // Seleccionar primera organización por defecto
+      if (response.data.organizations?.length > 0) {
+        const firstOrgId = response.data.organizations[0]?.id.toString()
+        selectedOrgId.value = firstOrgId || null
+        
+        // Agregar las organizaciones al objeto user para mantener consistencia
+        user.value.organizations = response.data.organizations
+      } else {
+        selectedOrgId.value = null
+      }
+
+      // Persistir en localStorage
+      if (import.meta.client) {
+        localStorage.setItem('auth_token', response.data.token)
+        localStorage.setItem('auth_user', JSON.stringify(user.value))
+        if (selectedOrgId.value) {
+          localStorage.setItem('selected_org_id', selectedOrgId.value)
+        }
+        // Establecer tiempo de expiración de la sesión
+        setSessionExpiration()
+      }
+
+      return response
     }
+    
+    throw new Error(response.message || 'Error en el login')
   }
 
   const register = async (data: RegisterData) => {
-    try {
-      const response = await $fetch<AuthResponse>('/auth/register', {
-        method: 'POST',
-        baseURL,
-        body: data
-      })
+    const response = await $fetch<AuthResponse>('/auth/register', {
+      method: 'POST',
+      baseURL,
+      body: data
+    })
 
-      if (response.success && response.data) {
-        // Auto-login después del registro
-        token.value = response.data.token
-        user.value = response.data.user
-        
-        // Persistir en localStorage
-        if (import.meta.client) {
-          localStorage.setItem('auth_token', response.data.token)
-          localStorage.setItem('auth_user', JSON.stringify(response.data.user))
-          // Establecer tiempo de expiración de la sesión
-          setSessionExpiration()
-        }
-
-        return response
-      }
+    if (response.success && response.data) {
+      // Auto-login después del registro
+      token.value = response.data.token
+      user.value = response.data.user
       
-      throw new Error(response.message || 'Error en el registro')
-    } catch (error: unknown) {
-      console.error('Error en registro:', error)
-      throw error
+      // Persistir en localStorage
+      if (import.meta.client) {
+        localStorage.setItem('auth_token', response.data.token)
+        localStorage.setItem('auth_user', JSON.stringify(response.data.user))
+        // Establecer tiempo de expiración de la sesión
+        setSessionExpiration()
+      }
+
+      return response
     }
+    
+    throw new Error(response.message || 'Error en el registro')
   }
 
   const logout = async () => {

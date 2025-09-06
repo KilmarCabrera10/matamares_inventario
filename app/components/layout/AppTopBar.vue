@@ -17,7 +17,7 @@
                   :to="item.href"
                   :class="[
                     'font-medium transition-colors duration-200 px-2 py-1 rounded-md',
-                    index === breadcrumbs.length - 1
+                    index === (breadcrumbs?.length ?? 1) - 1
                       ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
                       : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                   ]"

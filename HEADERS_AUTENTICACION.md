@@ -9,8 +9,10 @@ Se ha actualizado el sistema de autenticación para incluir automáticamente los
 Después del login exitoso, **TODAS** las peticiones incluirán automáticamente estos headers:
 
 ```
-token: <token_del_usuario>
-organizationId: <id_organizacion_seleccionada>
+Authorization: Bearer <token_del_usuario>
+Organization-Id: <id_organizacion_seleccionada>
+Content-Type: application/json
+Accept: application/json
 ```
 
 ### Archivos Modificados

@@ -62,56 +62,36 @@ export const useCuadreCaja = () => {
 
   // Obtener saldo anterior (último cuadre)
   const obtenerSaldoAnterior = async (): Promise<number> => {
-    try {
-      const response = await api.get<{ saldo: number }>('/cuadres/saldo-anterior')
-      return response.saldo || 0
-    } catch (error) {
-      console.error('Error al obtener saldo anterior:', error)
-      throw error
-    }
+    const response = await api.get<{ saldo: number }>('/cuadres/saldo-anterior')
+    return response.saldo || 0
   }
 
   // Obtener estadísticas del día
   const obtenerEstadisticasDia = async (fecha?: string): Promise<DailyStats> => {
-    try {
-      const fechaParam = fecha || new Date().toISOString().split('T')[0]
-      const response = await api.get<{ ingresos: number; gastos: number }>(`/movimientos/estadisticas-dia?fecha=${fechaParam}`)
-      
-      return {
-        ingresos: response.ingresos || 0,
-        gastos: response.gastos || 0,
-        diferencia: (response.ingresos || 0) - (response.gastos || 0)
-      }
-    } catch (error) {
-      console.error('Error al obtener estadísticas del día:', error)
-      throw error
+    const fechaParam = fecha || new Date().toISOString().split('T')[0]
+    const response = await api.get<{ ingresos: number; gastos: number }>(`/movimientos/estadisticas-dia?fecha=${fechaParam}`)
+    
+    return {
+      ingresos: response.ingresos || 0,
+      gastos: response.gastos || 0,
+      diferencia: (response.ingresos || 0) - (response.gastos || 0)
     }
   }
 
   // Obtener historial de cuadres
   const obtenerHistorialCuadres = async (limite: number = 10): Promise<HistorialCuadre[]> => {
-    try {
-      const response = await api.get<{ cuadres: HistorialCuadre[] }>(`/cuadres/historial?limit=${limite}`)
-      return response.cuadres || []
-    } catch (error) {
-      console.error('Error al obtener historial de cuadres:', error)
-      throw error
-    }
+    const response = await api.get<{ cuadres: HistorialCuadre[] }>(`/cuadres/historial?limit=${limite}`)
+    return response.cuadres || []
   }
 
   // Guardar cuadre de caja
   const guardarCuadre = async (cuadreCompleto: CuadreCompleto): Promise<CuadreResponse> => {
-    try {
-      const response = await api.post<CuadreResponse>('/cuadres', {
-        ...cuadreCompleto,
-        fecha: new Date().toISOString(),
-        createdAt: new Date().toISOString()
-      })
-      return response
-    } catch (error) {
-      console.error('Error al guardar cuadre:', error)
-      throw error
-    }
+    const response = await api.post<CuadreResponse>('/cuadres', {
+      ...cuadreCompleto,
+      fecha: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    })
+    return response
   }
 
   // Validar cuadre existente para la fecha
@@ -120,8 +100,7 @@ export const useCuadreCaja = () => {
       const fechaParam = fecha || new Date().toISOString().split('T')[0]
       const response = await api.get<{ existe: boolean }>(`/cuadres/validar-fecha?fecha=${fechaParam}`)
       return response.existe || false
-    } catch (error) {
-      console.error('Error al validar cuadre existente:', error)
+    } catch {
       return false
     }
   }
@@ -131,35 +110,24 @@ export const useCuadreCaja = () => {
     try {
       const response = await api.get<{ cuadre: CuadreCompleto }>(`/cuadres/fecha/${fecha}`)
       return response.cuadre || null
-    } catch (error) {
-      console.error('Error al obtener cuadre por fecha:', error)
+    } catch {
       return null
     }
   }
 
   // Actualizar cuadre existente
   const actualizarCuadre = async (id: number, cuadreCompleto: Partial<CuadreCompleto>): Promise<CuadreResponse> => {
-    try {
-      const response = await api.put<CuadreResponse>(`/cuadres/${id}`, {
-        ...cuadreCompleto,
-        updatedAt: new Date().toISOString()
-      })
-      return response
-    } catch (error) {
-      console.error('Error al actualizar cuadre:', error)
-      throw error
-    }
+    const response = await api.put<CuadreResponse>(`/cuadres/${id}`, {
+      ...cuadreCompleto,
+      updatedAt: new Date().toISOString()
+    })
+    return response
   }
 
   // Eliminar cuadre
   const eliminarCuadre = async (id: number): Promise<boolean> => {
-    try {
-      await api.delete(`/cuadres/${id}`)
-      return true
-    } catch (error) {
-      console.error('Error al eliminar cuadre:', error)
-      throw error
-    }
+    await api.delete(`/cuadres/${id}`)
+    return true
   }
 
   return {

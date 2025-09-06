@@ -1,32 +1,9 @@
-export interface User {
-  id: string
-  name: string
-  email: string
-  organizations: Organization[]
-}
-
-export interface AuthResponse {
-  success: boolean
-  data?: {
-    user: User
-    token: string
-    expires_at: string
-  }
-  message?: string
-  error?: string
-}
-
-export interface LoginCredentials {
-  email: string
-  password: string
-}
-
-export interface RegisterData {
-  name: string
-  email: string
-  password: string
-  password_confirmation: string
-}
+import type { 
+  BaseUser as User, 
+  AuthResponse, 
+  LoginCredentials, 
+  RegisterData 
+} from '../../types'
 
 export const useAuth = () => {
   // Estados reactivos - usar ref normal para mejor control
@@ -34,23 +11,78 @@ export const useAuth = () => {
   const token = ref<string | null>(null)
   const selectedOrgId = ref<string | null>(null)
   
+  // Configuración de expiración de sesión (en horas)
+  const SESSION_DURATION_HOURS = 24 // Duración por defecto: 24 horas
+  
+  // Función auxiliar para limpiar localStorage
+  const clearLocalStorage = () => {
+    if (import.meta.client) {
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('auth_user')
+      localStorage.removeItem('selected_org_id')
+      localStorage.removeItem('auth_expires_at')
+    }
+  }
+
+  // Función para validar si la sesión almacenada sigue siendo válida
+  const validateStoredSession = (): boolean => {
+    if (!import.meta.client) return false
+    
+    try {
+      const expiresAt = localStorage.getItem('auth_expires_at')
+      if (!expiresAt) {
+        // No hay timestamp de expiración, considerar sesión inválida
+        return false
+      }
+      
+      const expirationTime = parseInt(expiresAt, 10)
+      const currentTime = Date.now()
+      
+      // Verificar si la sesión ha expirado
+      if (currentTime >= expirationTime) {
+        console.log('Sesión expirada, limpiando datos...')
+        return false
+      }
+      
+      return true
+    } catch (error) {
+      console.error('Error al validar sesión:', error)
+      return false
+    }
+  }
+
+  // Función para establecer el tiempo de expiración de la sesión
+  const setSessionExpiration = (hours: number = SESSION_DURATION_HOURS) => {
+    if (import.meta.client) {
+      const expirationTime = Date.now() + (hours * 60 * 60 * 1000) // hours en milisegundos
+      localStorage.setItem('auth_expires_at', expirationTime.toString())
+    }
+  }
+  
   // Si estamos en el cliente, intentar restaurar inmediatamente
   if (import.meta.client && !token.value) {
-    const savedToken = localStorage.getItem('auth_token')
-    const savedUser = localStorage.getItem('auth_user')
-    const savedOrgId = localStorage.getItem('selected_org_id')
-    
-    if (savedToken && savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser)
-        if (parsedUser && (parsedUser.id || parsedUser._id) && parsedUser.email) {
-          token.value = savedToken
-          user.value = parsedUser
-          selectedOrgId.value = savedOrgId
+    const isSessionValid = validateStoredSession()
+    if (isSessionValid) {
+      const savedToken = localStorage.getItem('auth_token')
+      const savedUser = localStorage.getItem('auth_user')
+      const savedOrgId = localStorage.getItem('selected_org_id')
+      
+      if (savedToken && savedUser) {
+        try {
+          const parsedUser = JSON.parse(savedUser)
+          if (parsedUser && (parsedUser.id || parsedUser._id) && parsedUser.email) {
+            token.value = savedToken
+            user.value = parsedUser
+            selectedOrgId.value = savedOrgId
+          }
+        } catch {
+          // Ignorar errores de parsing
+          clearLocalStorage()
         }
-      } catch {
-        // Ignorar errores de parsing
       }
+    } else {
+      // Sesión expirada, limpiar datos
+      clearLocalStorage()
     }
   }
   
@@ -60,17 +92,17 @@ export const useAuth = () => {
   const baseURL = config.public.apiBase
 
   // Headers con autenticación
-  const getAuthHeaders = (organizationId?: string | number) => {
+  const getAuthHeaders = () => {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json'
     }
     
     if (token.value) {
-      headers['Authorization'] = `Bearer ${token.value}`
+      headers['token'] = token.value
     }
     
-    if (organizationId) {
-      headers['Organization-Id'] = organizationId.toString()
+    if (selectedOrgId.value) {
+      headers['organizationId'] = selectedOrgId.value
     }
     
     return headers
@@ -102,6 +134,8 @@ export const useAuth = () => {
           if (selectedOrgId.value) {
             localStorage.setItem('selected_org_id', selectedOrgId.value)
           }
+          // Establecer tiempo de expiración de la sesión
+          setSessionExpiration()
         }
 
         return response
@@ -131,6 +165,8 @@ export const useAuth = () => {
         if (import.meta.client) {
           localStorage.setItem('auth_token', response.data.token)
           localStorage.setItem('auth_user', JSON.stringify(response.data.user))
+          // Establecer tiempo de expiración de la sesión
+          setSessionExpiration()
         }
 
         return response
@@ -186,6 +222,8 @@ export const useAuth = () => {
         if (import.meta.client) {
           localStorage.setItem('auth_token', response.data.token)
           localStorage.setItem('auth_user', JSON.stringify(response.data.user))
+          // Renovar tiempo de expiración de la sesión
+          setSessionExpiration()
         }
         
         return true
@@ -226,6 +264,13 @@ export const useAuth = () => {
   const restoreSession = () => {
     if (import.meta.client) {
       try {
+        // Primero validar si la sesión no ha expirado
+        if (!validateStoredSession()) {
+          console.log('Sesión expirada al intentar restaurar')
+          clearLocalStorage()
+          return false
+        }
+
         const savedToken = localStorage.getItem('auth_token')
         const savedUser = localStorage.getItem('auth_user')
         const savedOrgId = localStorage.getItem('selected_org_id')
@@ -270,21 +315,63 @@ export const useAuth = () => {
     return false
   }
 
-  // Función auxiliar para limpiar localStorage
-  const clearLocalStorage = () => {
-    if (import.meta.client) {
-      localStorage.removeItem('auth_token')
-      localStorage.removeItem('auth_user')
-      localStorage.removeItem('selected_org_id')
-    }
-  }
-
   // Seleccionar organización
   const selectOrganization = (orgId: string) => {
     selectedOrgId.value = orgId
     if (import.meta.client) {
       localStorage.setItem('selected_org_id', orgId)
     }
+  }
+
+  // Función para obtener el tiempo restante de sesión en milisegundos
+  const getSessionTimeRemaining = (): number => {
+    if (!import.meta.client) return 0
+    
+    try {
+      const expiresAt = localStorage.getItem('auth_expires_at')
+      if (!expiresAt) return 0
+      
+      const expirationTime = parseInt(expiresAt, 10)
+      const currentTime = Date.now()
+      const timeRemaining = expirationTime - currentTime
+      
+      return Math.max(0, timeRemaining)
+    } catch {
+      return 0
+    }
+  }
+
+  // Función para verificar si la sesión expirará pronto (en los próximos 30 minutos)
+  const isSessionExpiringSoon = (): boolean => {
+    const timeRemaining = getSessionTimeRemaining()
+    const thirtyMinutes = 30 * 60 * 1000 // 30 minutos en milisegundos
+    return timeRemaining > 0 && timeRemaining <= thirtyMinutes
+  }
+
+  // Función para extender la sesión
+  const extendSession = (hours: number = SESSION_DURATION_HOURS) => {
+    if (import.meta.client && token.value) {
+      setSessionExpiration(hours)
+      console.log(`Sesión extendida por ${hours} horas`)
+    }
+  }
+
+  // Verificar expiración de sesión periódicamente (solo en cliente)
+  if (import.meta.client) {
+    // Verificar cada 5 minutos
+    setInterval(() => {
+      if (token.value && !validateStoredSession()) {
+        console.log('Sesión expirada detectada en verificación periódica')
+        // Limpiar sesión expirada automáticamente
+        token.value = null
+        user.value = null
+        selectedOrgId.value = null
+        clearLocalStorage()
+        
+        // Redirigir a la página de bienvenida
+        navigateTo('/welcome', { replace: true })
+      }
+    }, 5 * 60 * 1000) // 5 minutos
   }
 
   return {
@@ -294,7 +381,7 @@ export const useAuth = () => {
     isAuthenticated,
     selectedOrgId: readonly(selectedOrgId),
     
-    // Funciones
+    // Funciones de autenticación
     login,
     register,
     logout,
@@ -303,6 +390,12 @@ export const useAuth = () => {
     restoreSession,
     selectOrganization,
     getAuthHeaders,
-    clearLocalStorage
+    clearLocalStorage,
+    
+    // Funciones de manejo de sesión
+    getSessionTimeRemaining,
+    isSessionExpiringSoon,
+    extendSession,
+    validateStoredSession
   }
 }

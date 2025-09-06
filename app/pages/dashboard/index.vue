@@ -1,51 +1,13 @@
 <template>
-  <div>
-    <!-- Header del Dashboard -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-        Dashboard
-      </h1>
-      <p class="mt-2 text-gray-600 dark:text-gray-400">
-        Resumen general del inventario
-      </p>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <DashboardStatCard
-        title="Total Productos"
-        value="1,234"
-        change="+12%"
-        change-type="positive"
-        icon="lucide:package"
-        color="blue"
-      />
-      <DashboardStatCard
-        title="Stock Bajo"
-        value="23"
-        change="-5%"
-        change-type="negative"
-        icon="lucide:alert-triangle"
-        color="orange"
-      />
-      <DashboardStatCard
-        title="Valor Inventario"
-        value="$45,678"
-        change="+8%"
-        change-type="positive"
-        icon="lucide:dollar-sign"
-        color="green"
-      />
-      <DashboardStatCard
-        title="Movimientos Hoy"
-        value="89"
-        change="+15%"
-        change-type="positive"
-        icon="lucide:arrow-right-left"
-        color="purple"
-      />
-    </div>
-
+  <PageContainer
+    title="Dashboard"
+    subtitle="Resumen general del inventario"
+    :breadcrumbs="[
+      { name: 'Inicio', href: '/' },
+      { name: 'Dashboard' }
+    ]"
+    :stats="dashboardStats"
+  >
     <!-- Charts y Tables -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
       <!-- Chart de Inventario -->
@@ -161,12 +123,48 @@
         </div>
       </div>
     </UCard>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
 // Datos de ejemplo (después conectarás con tu API)
 const selectedPeriod = ref('Última semana')
+
+// Stats para el dashboard
+const dashboardStats = ref([
+  {
+    title: "Total Productos",
+    value: "1,234",
+    change: "+12%",
+    changeType: "positive" as const,
+    icon: "lucide:package",
+    color: "blue" as const
+  },
+  {
+    title: "Stock Bajo",
+    value: "23",
+    change: "-5%",
+    changeType: "negative" as const,
+    icon: "lucide:alert-triangle",
+    color: "orange" as const
+  },
+  {
+    title: "Valor Inventario",
+    value: "$45,678",
+    change: "+8%",
+    changeType: "positive" as const,
+    icon: "lucide:dollar-sign",
+    color: "green" as const
+  },
+  {
+    title: "Movimientos Hoy",
+    value: "89",
+    change: "+15%",
+    changeType: "positive" as const,
+    icon: "lucide:arrow-right-left",
+    color: "purple" as const
+  }
+])
 
 const chartPeriodItems = [
   [{ label: 'Última semana', click: () => selectedPeriod.value = 'Última semana' }],

@@ -15,8 +15,11 @@
       
       <!-- Page Content -->
       <main class="ml-2 mt-2 me-3 pt-16" data-main-content>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-          <slot />
+        <!-- Container fijo para todas las páginas -->
+        <div class="min-h-[calc(100vh-120px)] bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <div class="p-6">
+            <slot />
+          </div>
         </div>
       </main>
     </div>

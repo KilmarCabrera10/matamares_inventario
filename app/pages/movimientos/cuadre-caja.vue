@@ -1,46 +1,26 @@
 <template>
-  <div>
-    <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-        Cuadre de Caja
-      </h1>
-      <p class="mt-2 text-gray-600 dark:text-gray-400">
-        Control y cuadre diario de efectivo
-      </p>
-    </div>
-
-
-
-    <!-- Stats Cards del día -->
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-      <DashboardStatCard
-        title="Ingresos del Día"
-        :value="`$${formatMoney(dailyStats.ingresos)}`"
-        icon="lucide:trending-up"
-        color="green"
-      />
-      <DashboardStatCard
-        title="Gastos del Día"
-        :value="`$${formatMoney(dailyStats.gastos)}`"
-        icon="lucide:trending-down"
-        color="red"
-      />
-      <DashboardStatCard
-        title="Diferencia"
-        :value="`$${formatMoney(dailyStats.diferencia)}`"
-        :change-type="dailyStats.diferencia >= 0 ? 'positive' : 'negative'"
-        icon="lucide:calculator"
-        color="blue"
-      />
-      <DashboardStatCard
-        title="Efectivo Esperado"
-        :value="`$${formatMoney(calcularEfectivoEsperado)}`"
-        icon="lucide:wallet"
-        color="purple"
-      />
-    </div>
-
+  <PageContainer
+    title="Cuadre de Caja"
+    subtitle="Control y cuadre diario de efectivo"
+    :breadcrumbs="[
+      { name: 'Inicio', href: '/' },
+      { name: 'Movimientos', href: '/movimientos' },
+      { name: 'Cuadre de Caja' }
+    ]"
+    :stats="dailyStatsCards"
+  >
+    <template #actions>
+      <div class="flex space-x-3">
+        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+          <Icon name="lucide:save" class="w-4 h-4" />
+          <span>Guardar Cuadre</span>
+        </button>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+          <Icon name="lucide:printer" class="w-4 h-4" />
+          <span>Imprimir</span>
+        </button>
+      </div>
+    </template>
 
     <!-- Grid container para colocar las dos secciones lado a lado -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -391,7 +371,7 @@
       </UCard>
       </div>
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup lang="ts">
@@ -457,6 +437,35 @@ const dailyStats = ref<DailyStats>({
   diferencia: 0
 })
 const historialCuadres = ref<HistorialCuadre[]>([])
+
+// Stats cards para mostrar en el PageContainer
+const dailyStatsCards = computed(() => [
+  {
+    title: "Ingresos del Día",
+    value: `$${formatMoney(dailyStats.value.ingresos)}`,
+    icon: "lucide:trending-up",
+    color: "green" as const
+  },
+  {
+    title: "Gastos del Día",
+    value: `$${formatMoney(dailyStats.value.gastos)}`,
+    icon: "lucide:trending-down",
+    color: "red" as const
+  },
+  {
+    title: "Diferencia",
+    value: `$${formatMoney(dailyStats.value.diferencia)}`,
+    changeType: dailyStats.value.diferencia >= 0 ? 'positive' as const : 'negative' as const,
+    icon: "lucide:calculator",
+    color: "blue" as const
+  },
+  {
+    title: "Efectivo Esperado",
+    value: `$${formatMoney(calcularEfectivoEsperado.value)}`,
+    icon: "lucide:wallet",
+    color: "purple" as const
+  }
+])
 
 const diferenciaSaldoAnterior = computed(() => {
   return cuadre.value.saldoInicial - saldoAnterior.value
